@@ -52,10 +52,8 @@ Hệ thống quản lý tài khoản và giao dịch khách hàng ngân hàng đ
 | `TV3-nghiep-vu-giao-dich` | **Vòng Thế Quyền** | **6651060051** | Phát triển phân hệ Giao dịch (Nạp, Rút, Chuyển khoản), Lịch sử sao kê & Soạn Báo cáo Chương 3 (Mã nguồn). |
 | `TV4-doc-ghi-file-giao-dien` | **Huỳnh Anh Tú** | **6651060069** | Phát triển phân hệ Đọc/Ghi dữ liệu ra File, Thiết kế Menu Console & Format Báo cáo chuẩn 40–50 trang. |
 | `TV5-testing-benchmark-demo` | **Nguyễn Phú Quốc** | **6651060049** | Kiểm thử, đánh giá độ phức tạp O(1)/Rehash, kiểm tra Memory Leak, Chuẩn bị Slide & Kịch bản Demo, Soạn Báo cáo Chương 4. |
-````
-
-
 ## 5. Tiến độ và sản phẩm bàn giao
+
 | Mã công việc | Hạng mục | Sản phẩm đầu ra |
 | :---: | :--- | :--- |
 | **YC01** | Quản lý mã nguồn & Kiểm soát phiên bản | Repository GitHub, các nhánh làm việc, lịch sử commit minh bạch và file README.md. |
@@ -68,22 +66,22 @@ Hệ thống quản lý tài khoản và giao dịch khách hàng ngân hàng đ
 ## 6. Hướng dẫn thiết lập, biên dịch và chạy chương trình
 
 ### Cách 1: Chạy trực tuyến trên GDB Online
-1. Truy cập GDB Online C++ Compiler (`https://www.onlinegdb.com/online_c++_compiler`).
+1. Truy cập [GDB Online C++ Compiler](https://www.onlinegdb.com/online_c++_compiler).
 2. Chọn ngôn ngữ **C++** và chuẩn **C++11**.
 3. Sao chép toàn bộ mã nguồn vào trình soạn thảo và nhấn **Run**.
 
 ### Cách 2: Biên dịch bằng Dev-C++
 1. Mở Dev-C++ và tạo Project mới.
-2. Chọn **Tools → Compiler Options**.
+2. Chọn **Tools -> Compiler Options**.
 3. Tích chọn thêm lệnh cho trình biên dịch và nhập tham số: `-std=c++11`.
 4. Nhấn **OK**, sau đó chọn **Compile & Run** (hoặc phím **F11**).
 
 ### Cách 3: Biên dịch bằng Terminal / Command Prompt
 1. Mở Terminal tại thư mục dự án.
 2. Biên dịch chương trình bằng GCC với chuẩn C++11:
-   ```bash
-   g++ -std=c++11 main.cpp -o quan_ly_tai_khoan
-   ```
+```bash
+g++ -std=c++11 main.cpp -o quan_ly_tai_khoan
+```
 3. Chạy chương trình:
    * **Windows:** `quan_ly_tai_khoan.exe`
    * **Linux / macOS:** `./quan_ly_tai_khoan`
