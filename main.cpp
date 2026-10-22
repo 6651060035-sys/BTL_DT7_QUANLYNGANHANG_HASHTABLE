@@ -1,4 +1,6 @@
 
+
+```cpp
 #include <iostream>
 #include <string>
 #include <vector>
@@ -11,57 +13,57 @@
 using namespace std;
 
 // ============================================================================
-// PH?N 1: C?U TR�C D? LI?U N?N T?NG (ACCOUNT & TRANSACTION)
-// TH�NH VI�N PH? TR�CH: PHAN NAM (LEADER) - MSSV: 6651060035
-// NH�NH GIT: main / TV1-leader-core-hash-table
-// NHI?M V?: M� h�nh h�a c?u tr�c T�i kho?n v� L?ch s? Giao d?ch
+// PHẦN 1: CẤU TRÚC DỮ LIỆU NỀN TẢNG (ACCOUNT & TRANSACTION)
+// THÀNH VIÊN PHỤ TRÁCH: PHAN NAM (LEADER) - MSSV: 6651060035
+// NHÁNH GIT: main / TV1-leader-core-hash-table
+// NHIỆM VỤ: Mô hình hóa cấu trúc Tài khoản và Lịch sử Giao dịch
 // ============================================================================
 
-// C?u tr�c luu v?t Giao d?ch
+// Cấu trúc lưu vết Giao dịch
 struct Transaction {
-    string transID;     // M� giao d?ch
-    string type;        // Lo?i giao d?ch ("N?p ti?n", "R�t ti?n", "Chuy?n kho?n")
-    double amount;      // S? ti?n giao d?ch
-    string timestamp;   // Th?i gian th?c hi?n giao d?ch
-    string note;        // Ghi ch� / S? t�i kho?n nh?n
+    string transID;     // Mã giao dịch
+    string type;        // Loại giao dịch ("Nạp tiền", "Rút tiền", "Chuyển khoản")
+    double amount;      // Số tiền giao dịch
+    string timestamp;   // Thời gian thực hiện giao dịch
+    string note;        // Ghi chú / Số tài khoản nhận
 
     void display() const {
         cout << "  [" << timestamp << "] " << left << setw(14) << type 
-             << " | S? ti?n: " << right << setw(12) << fixed << setprecision(0) << amount << " VND"
-             << " | Ghi ch�: " << note << endl;
+             << " | Số tiền: " << right << setw(12) << fixed << setprecision(0) << amount << " VND"
+             << " | Ghi chú: " << note << endl;
     }
 };
 
-// C?u tr�c T�i kho?n Kh�ch h�ng (Luu trong t?ng Node c?a B?ng bam)
+// Cấu trúc Tài khoản Khách hàng (Lưu trong từng Node của Bảng băm)
 struct Account {
-    string accountNumber;        // Kh�a bam ch�nh (Key - S? t�i kho?n)
-    string fullName;             // H? v� t�n kh�ch h�ng
-    string idCard;               // S? CCCD / CMND
-    double balance;              // S? du t�i kho?n hi?n t?i (VND)
-    vector<Transaction> history; // L?ch s? c�c giao d?ch
+    string accountNumber;        // Khóa băm chính (Key - Số tài khoản)
+    string fullName;             // Họ và tên khách hàng
+    string idCard;               // Số CCCD / CMND
+    double balance;              // Số dư tài khoản hiện tại (VND)
+    vector<Transaction> history; // Lịch sử các giao dịch
 
     Account(string accNum = "", string name = "", string id = "", double bal = 0.0)
         : accountNumber(accNum), fullName(name), idCard(id), balance(bal) {}
 
     void displayInfo() const {
         cout << "==================================================\n";
-        cout << " S? T�i Kho?n : " << accountNumber << "\n";
-        cout << " Ch? T�i Kho?n: " << fullName << "\n";
-        cout << " S? CCCD/CMND : " << idCard << "\n";
-        cout << " S? Du Hi?n T?i: " << fixed << setprecision(0) << balance << " VND\n";
-        cout << " S? Giao D?ch  : " << history.size() << " giao d?ch\n";
+        cout << " Số Tài Khoản : " << accountNumber << "\n";
+        cout << " Chủ Tài Khoản: " << fullName << "\n";
+        cout << " Số CCCD/CMND : " << idCard << "\n";
+        cout << " Số Dư Hiện Tại: " << fixed << setprecision(0) << balance << " VND\n";
+        cout << " Số Giao Dịch  : " << history.size() << " giao dịch\n";
         cout << "==================================================\n";
     }
 };
 
 // ============================================================================
-// PH?N 2: CORE HASH TABLE & REHASH ALGORITHM
-// TH�NH VI�N PH? TR�CH: PHAN NAM (LEADER) - MSSV: 6651060035
-// NH�NH GIT: main / TV1-leader-core-hash-table
-// NHI?M V?: C�i d?t B?ng bam, Separate Chaining, Polynomial Hash, Rehash & Memory Management
+// PHẦN 2: CORE HASH TABLE & REHASH ALGORITHM
+// THÀNH VIÊN PHỤ TRÁCH: PHAN NAM (LEADER) - MSSV: 6651060035
+// NHÁNH GIT: main / TV1-leader-core-hash-table
+// NHIỆM VỤ: Cài đặt Bảng băm, Separate Chaining, Polynomial Hash, Rehash & Memory Management
 // ============================================================================
 
-// Node trong Danh s�ch li�n k?t don (Separate Chaining)
+// Node trong Danh sách liên kết đơn (Separate Chaining)
 struct Node {
     Account data;
     Node* next;
@@ -71,16 +73,16 @@ struct Node {
 
 class HashTable {
 private:
-    Node** table;                        // M?ng c�c con tr? tr? d?n DS li�n k?t
-    int capacity;                        // K�ch thu?c m?ng bam
-    int size;                            // S? lu?ng t�i kho?n hi?n c�
-    const double MAX_LOAD_FACTOR = 0.75; // Ngu?ng k�ch ho?t Rehash
+    Node** table;                        // Mảng các con trỏ trỏ đến DS liên kết
+    int capacity;                        // Kích thước mảng băm
+    int size;                            // Số lượng tài khoản hiện có
+    const double MAX_LOAD_FACTOR = 0.75; // Ngưỡng kích hoạt Rehash
 
-    // 1. H�m bam chu?i Polynomial Rolling Hash Function
+    // 1. Hàm băm chuỗi Polynomial Rolling Hash Function
     int hashFunction(const string& key) const {
         long long hashValue = 0;
-        long long p = 31;          // S? nguy�n t? cho chu?i s?
-        long long m = 1e9 + 9;     // M�-dun s? l?n tr�nh tr�n s?
+        long long p = 31;          // Số nguyên tố cho chuỗi số
+        long long m = 1e9 + 9;     // Mô-đun số lớn tránh tràn số
         long long p_pow = 1;
 
         for (char c : key) {
@@ -90,26 +92,26 @@ private:
         return (hashValue % capacity + capacity) % capacity;
     }
 
-    // 2. Thu?t to�n Rehash m? r?ng B?ng bam t? d?ng khi Load Factor >= 0.75
+    // 2. Thuật toán Rehash mở rộng Bảng băm tự động khi Load Factor >= 0.75
     void rehash() {
         int oldCapacity = capacity;
         Node** oldTable = table;
 
-        capacity = capacity * 2 + 1; // M? r?ng m?ng bam (G?p d�i + 1)
+        capacity = capacity * 2 + 1; // Mở rộng mảng băm (Gấp đôi + 1)
         table = new Node*[capacity]();
         size = 0;
 
         for (int i = 0; i < oldCapacity; ++i) {
             Node* current = oldTable[i];
             while (current != nullptr) {
-                insertAccount(current->data); // Ch�n l?i v�o m?ng bam m?i
+                insertAccount(current->data); // Chèn lại vào mảng băm mới
                 Node* temp = current;
                 current = current->next;
-                delete temp; // Gi?i ph�ng Node cu
+                delete temp; // Giải phóng Node cũ
             }
         }
-        delete[] oldTable; // Gi?i ph�ng m?ng con tr? cu
-        cout << "=> [SYSTEM - PHAN NAM] �� Rehash m? r?ng B?ng bam! K�ch thu?c m?i: " << capacity << endl;
+        delete[] oldTable; // Giải phóng mảng con trỏ cũ
+        cout << "=> [SYSTEM - PHAN NAM] Đã Rehash mở rộng Bảng băm! Kích thước mới: " << capacity << endl;
     }
 
 public:
@@ -117,7 +119,7 @@ public:
         table = new Node*[capacity]();
     }
 
-    // Destructor gi?i ph�ng b? nh? tri?t d? (Tr�nh r� r? b? nh? - Memory Leak)
+    // Destructor giải phóng bộ nhớ triệt để (Tránh rò rỉ bộ nhớ - Memory Leak)
     ~HashTable() {
         for (int i = 0; i < capacity; ++i) {
             Node* current = table[i];
@@ -137,7 +139,7 @@ public:
     int getSize() const { return size; }
     int getCapacity() const { return capacity; }
 
-    // Ch�n t�i kho?n v�o B?ng bam
+    // Chèn tài khoản vào Bảng băm
     bool insertAccount(const Account& acc) {
         if (getLoadFactor() >= MAX_LOAD_FACTOR) {
             rehash();
@@ -148,7 +150,7 @@ public:
 
         while (current != nullptr) {
             if (current->data.accountNumber == acc.accountNumber) {
-                return false; // Tr�ng s? t�i kho?n
+                return false; // Trùng số tài khoản
             }
             current = current->next;
         }
@@ -160,7 +162,7 @@ public:
         return true;
     }
 
-    // Tra c?u t�i kho?n O(1)
+    // Tra cứu tài khoản O(1)
     Account* searchAccount(const string& accNum) {
         int index = hashFunction(accNum);
         Node* current = table[index];
@@ -174,7 +176,7 @@ public:
         return nullptr;
     }
 
-    // X�a t�i kho?n kh?i B?ng bam
+    // Xóa tài khoản khỏi Bảng băm
     bool deleteAccount(const string& accNum) {
         int index = hashFunction(accNum);
         Node* current = table[index];
@@ -197,7 +199,7 @@ public:
         return false;
     }
 
-    // Duy?t qua t?t c? t�i kho?n (H? tr? luu file)
+    // Duyệt qua tất cả tài khoản (Hỗ trợ lưu file)
     vector<Account*> getAllAccounts() const {
         vector<Account*> result;
         for (int i = 0; i < capacity; ++i) {
@@ -212,15 +214,15 @@ public:
 };
 
 // ============================================================================
-// PH?N 3: MODULE QU?N L� T�I KHO?N (M? T�I KHO?N, TRA C?U O(1) & B?T L?I)
-// TH�NH VI�N PH? TR�CH: NGUY?N PHUONG HO�NG TR?NG - MSSV: 6651060065
-// NH�NH GIT: TV2-quan-ly-tai-khoan
-// NHI?M V?: M? t�i kho?n m?i, Tra c?u O(1), X�a t�i kho?n, B?t l?i nh?p li?u
+// PHẦN 3: MODULE QUẢN LÝ TÀI KHOẢN (MỞ TÀI KHOẢN, TRA CỨU O(1) & BẮT LỖI)
+// THÀNH VIÊN PHỤ TRÁCH: NGUYỄN PHƯƠNG HOÀNG TRỌNG - MSSV: 6651060065
+// NHÁNH GIT: TV2-quan-ly-tai-khoan
+// NHIỆM VỤ: Mở tài khoản mới, Tra cứu O(1), Xóa tài khoản, Bắt lỗi nhập liệu
 // ============================================================================
 
 namespace AccountManagementModule {
 
-    // Ki?m tra chu?i ch? ch?a k� t? s?
+    // Kiểm tra chuỗi chỉ chứa ký tự số
     bool isNumeric(const string& str) {
         if (str.empty()) return false;
         for (char c : str) {
@@ -229,91 +231,91 @@ namespace AccountManagementModule {
         return true;
     }
 
-    // Ch?c nang 1: M? t�i kho?n kh�ch h�ng m?i
+    // Chức năng 1: Mở tài khoản khách hàng mới
     void openNewAccount(HashTable& ht) {
-        cout << "\n--- [MODULE HO�NG TR?NG] M? T�I KHO?N M?I ---\n";
+        cout << "\n--- [MODULE HOÀNG TRỌNG] MỞ TÀI KHOẢN MỚI ---\n";
         string accNum, name, idCard;
         double initBalance;
 
-        cout << "Nh?p s? t�i kho?n (chu?i ch? s?): ";
+        cout << "Nhập số tài khoản (chuỗi chữ số): ";
         cin >> accNum;
         if (!isNumeric(accNum) || accNum.length() < 4) {
-            cout << "=> ERROR: S? t�i kho?n kh�ng h?p l?! Ph?i l� chu?i s?.\n";
+            cout << "=> ERROR: Số tài khoản không hợp lệ! Phải là chuỗi số.\n";
             return;
         }
 
         if (ht.searchAccount(accNum) != nullptr) {
-            cout << "=> ERROR: S? t�i kho?n " << accNum << " d� t?n t?i trong h? th?ng!\n";
+            cout << "=> ERROR: Số tài khoản " << accNum << " đã tồn tại trong hệ thống!\n";
             return;
         }
 
         cin.ignore();
-        cout << "Nh?p h? v� t�n kh�ch h�ng: ";
+        cout << "Nhập họ và tên khách hàng: ";
         getline(cin, name);
         if (name.empty()) {
-            cout << "=> ERROR: T�n kh�ch h�ng kh�ng du?c d? r?ng!\n";
+            cout << "=> ERROR: Tên khách hàng không được để rỗng!\n";
             return;
         }
 
-        cout << "Nh?p s? CCCD/CMND: ";
+        cout << "Nhập số CCCD/CMND: ";
         cin >> idCard;
 
-        cout << "Nh?p s? du ban d?u (T?i thi?u 50,000 VND): ";
+        cout << "Nhập số dư ban đầu (Tối thiểu 50,000 VND): ";
         cin >> initBalance;
         if (initBalance < 50000) {
-            cout << "=> ERROR: S? du ban d?u t?i thi?u ph?i t? 50,000 VND!\n";
+            cout << "=> ERROR: Số dư ban đầu tối thiểu phải từ 50,000 VND!\n";
             return;
         }
 
         Account newAcc(accNum, name, idCard, initBalance);
         if (ht.insertAccount(newAcc)) {
-            cout << "=> TH�NH C�NG: �� m? t�i kho?n " << accNum << " cho kh�ch h�ng " << name << "!\n";
+            cout << "=> THÀNH CÔNG: Đã mở tài khoản " << accNum << " cho khách hàng " << name << "!\n";
         } else {
-            cout << "=> ERROR: Kh�ng th? th�m t�i kho?n v�o B?ng bam!\n";
+            cout << "=> ERROR: Không thể thêm tài khoản vào Bảng băm!\n";
         }
     }
 
-    // Ch?c nang 2: Tra c?u th�ng tin t�i kho?n t?c th?i O(1)
+    // Chức năng 2: Tra cứu thông tin tài khoản tức thời O(1)
     void searchAccountInfo(HashTable& ht) {
-        cout << "\n--- [MODULE HO�NG TR?NG] TRA C?U T�I KHO?N O(1) ---\n";
+        cout << "\n--- [MODULE HOÀNG TRỌNG] TRA CỨU TÀI KHOẢN O(1) ---\n";
         string accNum;
-        cout << "Nh?p s? t�i kho?n c?n tra c?u: ";
+        cout << "Nhập số tài khoản cần tra cứu: ";
         cin >> accNum;
 
         Account* acc = ht.searchAccount(accNum);
         if (acc != nullptr) {
-            cout << "=> T�M TH?Y T�I KHO?N T?C TH?I O(1):\n";
+            cout << "=> TÌM THẤY TÀI KHOẢN TỨC THỜI O(1):\n";
             acc->displayInfo();
         } else {
-            cout << "=> KH�NG T�M TH?Y t�i kho?n: " << accNum << endl;
+            cout << "=> KHÔNG TÌM THẤY tài khoản: " << accNum << endl;
         }
     }
 
-    // Ch?c nang 3: X�a t�i kho?n
+    // Chức năng 3: Xóa tài khoản
     void closeAccount(HashTable& ht) {
-        cout << "\n--- [MODULE HO�NG TR?NG] X�A T�I KHO?N ---\n";
+        cout << "\n--- [MODULE HOÀNG TRỌNG] XÓA TÀI KHOẢN ---\n";
         string accNum;
-        cout << "Nh?p s? t�i kho?n c?n x�a: ";
+        cout << "Nhập số tài khoản cần xóa: ";
         cin >> accNum;
 
         if (ht.deleteAccount(accNum)) {
-            cout << "=> TH�NH C�NG: �� x�a t�i kho?n " << accNum << " kh?i h? th?ng.\n";
+            cout << "=> THÀNH CÔNG: Đã xóa tài khoản " << accNum << " khỏi hệ thống.\n";
         } else {
-            cout << "=> ERROR: Kh�ng t�m th?y t�i kho?n " << accNum << " d? x�a.\n";
+            cout << "=> ERROR: Không tìm thấy tài khoản " << accNum << " để xóa.\n";
         }
     }
 }
 
 // ============================================================================
-// PH?N 4: MODULE GIAO D?CH NG�N H�NG & SAO K� L?CH S?
-// TH�NH VI�N PH? TR�CH: V�NG TH? QUY?N - MSSV: 6651060051
-// NH�NH GIT: TV3-nghiep-vu-giao-dich
-// NHI?M V?: N?p ti?n, R�t ti?n, Chuy?n kho?n an to�n, Xu?t sao k� giao d?ch
+// PHẦN 4: MODULE GIAO DỊCH NGÂN HÀNG & SAO KÊ LỊCH SỬ
+// THÀNH VIÊN PHỤ TRÁCH: VÒNG THẾ QUYỀN - MSSV: 6651060051
+// NHÁNH GIT: TV3-nghiep-vu-giao-dich
+// NHIỆM VỤ: Nạp tiền, Rút tiền, Chuyển khoản an toàn, Xuất sao kê giao dịch
 // ============================================================================
 
 namespace TransactionModule {
 
-    // H�m l?y th?i gian th?c h? th?ng
+    // Hàm lấy thời gian thực hệ thống
     string getCurrentTime() {
         time_t now = time(0);
         tm *ltm = localtime(&now);
@@ -327,25 +329,25 @@ namespace TransactionModule {
         return ss.str();
     }
 
-    // Ch?c nang 1: N?p ti?n v�o t�i kho?n
+    // Chức năng 1: Nạp tiền vào tài khoản
     void deposit(HashTable& ht) {
-        cout << "\n--- [MODULE TH? QUY?N] N?P TI?N V�O T�I KHO?N ---\n";
+        cout << "\n--- [MODULE THẾ QUYỀN] NẠP TIỀN VÀO TÀI KHOẢN ---\n";
         string accNum;
         double amount;
 
-        cout << "Nh?p s? t�i kho?n: ";
+        cout << "Nhập số tài khoản: ";
         cin >> accNum;
 
         Account* acc = ht.searchAccount(accNum);
         if (acc == nullptr) {
-            cout << "=> ERROR: T�i kho?n kh�ng t?n t?i!\n";
+            cout << "=> ERROR: Tài khoản không tồn tại!\n";
             return;
         }
 
-        cout << "Nh?p s? ti?n mu?n n?p (VND): ";
+        cout << "Nhập số tiền muốn nạp (VND): ";
         cin >> amount;
         if (amount <= 0) {
-            cout << "=> ERROR: S? ti?n n?p ph?i l?n hon 0!\n";
+            cout << "=> ERROR: Số tiền nạp phải lớn hơn 0!\n";
             return;
         }
 
@@ -353,41 +355,41 @@ namespace TransactionModule {
 
         Transaction trans;
         trans.transID = "TX" + to_string(rand() % 900000 + 100000);
-        trans.type = "N?p ti?n";
+        trans.type = "Nạp tiền";
         trans.amount = amount;
         trans.timestamp = getCurrentTime();
-        trans.note = "N?p ti?n t?i qu?y";
+        trans.note = "Nạp tiền tại quầy";
 
         acc->history.push_back(trans);
 
-        cout << "=> TH�NH C�NG: �� n?p " << fixed << setprecision(0) << amount 
-             << " VND. S? du m?i: " << acc->balance << " VND\n";
+        cout << "=> THÀNH CÔNG: Đã nạp " << fixed << setprecision(0) << amount 
+             << " VND. Số dư mới: " << acc->balance << " VND\n";
     }
 
-    // Ch?c nang 2: R�t ti?n t? t�i kho?n
+    // Chức năng 2: Rút tiền từ tài khoản
     void withdraw(HashTable& ht) {
-        cout << "\n--- [MODULE TH? QUY?N] R�T TI?N T? T�I KHO?N ---\n";
+        cout << "\n--- [MODULE THẾ QUYỀN] RÚT TIỀN TỪ TÀI KHOẢN ---\n";
         string accNum;
         double amount;
 
-        cout << "Nh?p s? t�i kho?n: ";
+        cout << "Nhập số tài khoản: ";
         cin >> accNum;
 
         Account* acc = ht.searchAccount(accNum);
         if (acc == nullptr) {
-            cout << "=> ERROR: T�i kho?n kh�ng t?n t?i!\n";
+            cout << "=> ERROR: Tài khoản không tồn tại!\n";
             return;
         }
 
-        cout << "Nh?p s? ti?n mu?n r�t (VND): ";
+        cout << "Nhập số tiền muốn rút (VND): ";
         cin >> amount;
         if (amount <= 0) {
-            cout << "=> ERROR: S? ti?n r�t ph?i l?n hon 0!\n";
+            cout << "=> ERROR: Số tiền rút phải lớn hơn 0!\n";
             return;
         }
 
         if (acc->balance - amount < 50000) {
-            cout << "=> ERROR: S? du kh�ng d?! Ph?i duy tr� s? du t?i thi?u 50,000 VND.\n";
+            cout << "=> ERROR: Số dư không đủ! Phải duy trì số dư tối thiểu 50,000 VND.\n";
             return;
         }
 
@@ -395,106 +397,106 @@ namespace TransactionModule {
 
         Transaction trans;
         trans.transID = "TX" + to_string(rand() % 900000 + 100000);
-        trans.type = "R�t ti?n";
+        trans.type = "Rút tiền";
         trans.amount = amount;
         trans.timestamp = getCurrentTime();
-        trans.note = "R�t ti?n t?i ATM/Qu?y";
+        trans.note = "Rút tiền tại ATM/Quầy";
 
         acc->history.push_back(trans);
 
-        cout << "=> TH�NH C�NG: �� r�t " << fixed << setprecision(0) << amount 
-             << " VND. S? du c�n l?i: " << acc->balance << " VND\n";
+        cout << "=> THÀNH CÔNG: Đã rút " << fixed << setprecision(0) << amount 
+             << " VND. Số dư còn lại: " << acc->balance << " VND\n";
     }
 
-    // Ch?c nang 3: Chuy?n kho?n an to�n
+    // Chức năng 3: Chuyển khoản an toàn
     void transfer(HashTable& ht) {
-        cout << "\n--- [MODULE TH? QUY?N] CHUY?N KHO?N AN TO�N ---\n";
+        cout << "\n--- [MODULE THẾ QUYỀN] CHUYỂN KHOẢN AN TOÀN ---\n";
         string srcAccNum, destAccNum;
         double amount;
 
-        cout << "Nh?p s? t�i kho?n NGU?I G?I: ";
+        cout << "Nhập số tài khoản NGƯỜI GỬI: ";
         cin >> srcAccNum;
         Account* srcAcc = ht.searchAccount(srcAccNum);
         if (srcAcc == nullptr) {
-            cout << "=> ERROR: T�i kho?n ngu?i g?i kh�ng t?n t?i!\n";
+            cout << "=> ERROR: Tài khoản người gửi không tồn tại!\n";
             return;
         }
 
-        cout << "Nh?p s? t�i kho?n NGU?I NH?N: ";
+        cout << "Nhập số tài khoản NGƯỜI NHẬN: ";
         cin >> destAccNum;
         if (srcAccNum == destAccNum) {
-            cout << "=> ERROR: Kh�ng th? chuy?n kho?n cho ch�nh m�nh!\n";
+            cout << "=> ERROR: Không thể chuyển khoản cho chính mình!\n";
             return;
         }
 
         Account* destAcc = ht.searchAccount(destAccNum);
         if (destAcc == nullptr) {
-            cout << "=> ERROR: T�i kho?n ngu?i nh?n kh�ng t?n t?i!\n";
+            cout << "=> ERROR: Tài khoản người nhận không tồn tại!\n";
             return;
         }
 
-        cout << "Nh?p s? ti?n chuy?n (VND): ";
+        cout << "Nhập số tiền chuyển (VND): ";
         cin >> amount;
         if (amount <= 0) {
-            cout << "=> ERROR: S? ti?n chuy?n ph?i l?n hon 0!\n";
+            cout << "=> ERROR: Số tiền chuyển phải lớn hơn 0!\n";
             return;
         }
 
         if (srcAcc->balance - amount < 50000) {
-            cout << "=> ERROR: S? du ngu?i g?i kh�ng d? d? chuy?n kho?n!\n";
+            cout << "=> ERROR: Số dư người gửi không đủ để chuyển khoản!\n";
             return;
         }
 
-        // Th?c hi?n giao d?ch chuy?n kho?n
+        // Thực hiện giao dịch chuyển khoản
         srcAcc->balance -= amount;
         destAcc->balance += amount;
 
         string timeStr = getCurrentTime();
         string txID = "TX" + to_string(rand() % 900000 + 100000);
 
-        // Luu l?ch s? ngu?i g?i
+        // Lưu lịch sử người gửi
         Transaction t1;
         t1.transID = txID;
-        t1.type = "Chuy?n ti?n di";
+        t1.type = "Chuyển tiền đi";
         t1.amount = amount;
         t1.timestamp = timeStr;
-        t1.note = "Chuy?n t?i TK: " + destAccNum + " (" + destAcc->fullName + ")";
+        t1.note = "Chuyển tới TK: " + destAccNum + " (" + destAcc->fullName + ")";
         srcAcc->history.push_back(t1);
 
-        // Luu l?ch s? ngu?i nh?n
+        // Lưu lịch sử người nhận
         Transaction t2;
         t2.transID = txID;
-        t2.type = "Nh?n ti?n d?n";
+        t2.type = "Nhận tiền đến";
         t2.amount = amount;
         t2.timestamp = timeStr;
-        t2.note = "Nh?n t? TK: " + srcAccNum + " (" + srcAcc->fullName + ")";
+        t2.note = "Nhận từ TK: " + srcAccNum + " (" + srcAcc->fullName + ")";
         destAcc->history.push_back(t2);
 
-        cout << "=> TH�NH C�NG: �� chuy?n " << fixed << setprecision(0) << amount 
-             << " VND t? TK " << srcAccNum << " sang TK " << destAccNum << "!\n";
+        cout << "=> THÀNH CÔNG: Đã chuyển " << fixed << setprecision(0) << amount 
+             << " VND từ TK " << srcAccNum << " sang TK " << destAccNum << "!\n";
     }
 
-    // Ch?c nang 4: In sao k� l?ch s? giao d?ch
+    // Chức năng 4: In sao kê lịch sử giao dịch
     void printStatement(HashTable& ht) {
-        cout << "\n--- [MODULE TH? QUY?N] XU?T SAO K� GIAO D?CH ---\n";
+        cout << "\n--- [MODULE THẾ QUYỀN] XUẤT SAO KÊ GIAO DỊCH ---\n";
         string accNum;
-        cout << "Nh?p s? t�i kho?n c?n in sao k�: ";
+        cout << "Nhập số tài khoản cần in sao kê: ";
         cin >> accNum;
 
         Account* acc = ht.searchAccount(accNum);
         if (acc == nullptr) {
-            cout << "=> ERROR: T�i kho?n kh�ng t?n t?i!\n";
+            cout << "=> ERROR: Tài khoản không tồn tại!\n";
             return;
         }
 
         cout << "\n======================================================================\n";
-        cout << "                SAO K� L?CH S? GIAO D?CH NG�N H�NG                   \n";
-        cout << " S? TK: " << acc->accountNumber << " | Ch? TK: " << acc->fullName << endl;
-        cout << " S? du hi?n t?i: " << fixed << setprecision(0) << acc->balance << " VND\n";
+        cout << "                SAO KÊ LỊCH SỬ GIAO DỊCH NGÂN HÀNG                   \n";
+        cout << " Số TK: " << acc->accountNumber << " | Chủ TK: " << acc->fullName << endl;
+        cout << " Số dư hiện tại: " << fixed << setprecision(0) << acc->balance << " VND\n";
         cout << "----------------------------------------------------------------------\n";
 
         if (acc->history.empty()) {
-            cout << "   (Chua c� giao d?ch n�o du?c th?c hi?n)\n";
+            cout << "   (Chưa có giao dịch nào được thực hiện)\n";
         } else {
             for (const auto& t : acc->history) {
                 t.display();
@@ -505,31 +507,31 @@ namespace TransactionModule {
 }
 
 // ============================================================================
-// PH?N 5: MODULE �?C/GHI FILE & GIAO DI?N CONSOLE MENU
-// TH�NH VI�N PH? TR�CH: HU?NH ANH T� - MSSV: 6651060069
-// NH�NH GIT: TV4-doc-ghi-file-giao-dien
-// NHI?M V?: �?c/Ghi d? li?u b?n v?ng xu?ng file CSV, Giao di?n Menu Console
+// PHẦN 5: MODULE ĐỌC/GHI FILE & GIAO DIỆN CONSOLE MENU
+// THÀNH VIÊN PHỤ TRÁCH: HUỲNH ANH TÚ - MSSV: 6651060069
+// NHÁNH GIT: TV4-doc-ghi-file-giao-dien
+// NHIỆM VỤ: Đọc/Ghi dữ liệu bền vững xuống file CSV, Giao diện Menu Console
 // ============================================================================
 
 namespace FileAndUIModule {
 
     const string DATA_FILE = "bank_data.csv";
 
-    // Ch?c nang 1: Luu to�n b? d? li?u ra File CSV
+    // Chức năng 1: Lưu toàn bộ dữ liệu ra File CSV
     void saveData(const HashTable& ht) {
         ofstream outFile(DATA_FILE);
         if (!outFile.is_open()) {
-            cout << "=> ERROR: Kh�ng th? m? file d? ghi d? li?u!\n";
+            cout << "=> ERROR: Không thể mở file để ghi dữ liệu!\n";
             return;
         }
 
         vector<Account*> accounts = ht.getAllAccounts();
         for (Account* acc : accounts) {
-            // �?nh d?ng d�ng t�i kho?n: ACC,accountNumber,fullName,idCard,balance
+            // Định dạng dòng tài khoản: ACC,accountNumber,fullName,idCard,balance
             outFile << "ACC," << acc->accountNumber << "," << acc->fullName << ","
                     << acc->idCard << "," << fixed << setprecision(0) << acc->balance << "\n";
 
-            // �?nh d?ng d�ng giao d?ch: TRANS,transID,type,amount,timestamp,note
+            // Định dạng dòng giao dịch: TRANS,transID,type,amount,timestamp,note
             for (const auto& t : acc->history) {
                 outFile << "TRANS," << t.transID << "," << t.type << ","
                         << fixed << setprecision(0) << t.amount << ","
@@ -538,15 +540,15 @@ namespace FileAndUIModule {
         }
 
         outFile.close();
-        cout << "=> [MODULE ANH T�] �� luu th�nh c�ng " << accounts.size() 
-             << " t�i kho?n ra file '" << DATA_FILE << "'!\n";
+        cout << "=> [MODULE ANH TÚ] Đã lưu thành công " << accounts.size() 
+             << " tài khoản ra file '" << DATA_FILE << "'!\n";
     }
 
-    // Ch?c nang 2: �?c kh�i ph?c d? li?u t? File CSV khi kh?i d?ng
+    // Chức năng 2: Đọc khôi phục dữ liệu từ File CSV khi khởi động
     void loadData(HashTable& ht) {
         ifstream inFile(DATA_FILE);
         if (!inFile.is_open()) {
-            cout << "=> [MODULE ANH T�] Kh�ng t�m th?y file d? li?u cu. S? kh?i t?o h? th?ng m?i.\n";
+            cout << "=> [MODULE ANH TÚ] Không tìm thấy file dữ liệu cũ. Sẽ khởi tạo hệ thống mới.\n";
             return;
         }
 
@@ -587,42 +589,42 @@ namespace FileAndUIModule {
         }
 
         inFile.close();
-        cout << "=> [MODULE ANH T�] �� n?p th�nh c�ng " << accCount 
-             << " t�i kho?n t? file '" << DATA_FILE << "'!\n";
+        cout << "=> [MODULE ANH TÚ] Đã nạp thành công " << accCount 
+             << " tài khoản từ file '" << DATA_FILE << "'!\n";
     }
 
-    // Ch?c nang 3: Giao di?n Menu Console tuong t�c
+    // Chức năng 3: Giao diện Menu Console tương tác
     void showMenu() {
         cout << "\n================================================================\n";
-        cout << "     H? TH?NG QU?N L� T�I KHO?N & GIAO D?CH NG�N H�NG (�T07)    \n";
+        cout << "     HỆ THỐNG QUẢN LÝ TÀI KHOẢN & GIAO DỊCH NGÂN HÀNG (ĐT07)    \n";
         cout << "================================================================\n";
-        cout << " M? t�i kho?n m?i               (Ph? tr�ch: Ho�ng Tr?ng)    \n";
-        cout << " Tra c?u t�i kho?n O(1)         (Ph? tr�ch: Ho�ng Tr?ng)    \n";
-        cout << " X�a t�i kho?n                  (Ph? tr�ch: Ho�ng Tr?ng)    \n";
-        cout << " N?p ti?n v�o t�i kho?n         (Ph? tr�ch: Th? Quy�n)      \n";
-        cout << " R�t ti?n t? t�i kho?n          (Ph? tr�ch: Th? Quy�n)      \n";
-        cout << " Chuy?n kho?n an to�n           (Ph? tr�ch: Th? Quy�n)      \n";
-        cout << " In sao k� l?ch s? giao d?ch    (Ph? tr�ch: Th? Quy�n)      \n";
-        cout << " Ch?y Th? nghi?m & Benchmark    (Ph? tr�ch: Ph� Qu?c)       \n";
-        cout << " Luu d? li?u ra File            (Ph? tr�ch: Anh T�)         \n";
-        cout << " Tho�t v� Luu h? th?ng                                      \n";
+        cout << " Mở tài khoản mới               (Phụ trách: Hoàng Trọng)    \n";
+        cout << " Tra cứu tài khoản O(1)         (Phụ trách: Hoàng Trọng)    \n";
+        cout << " Xóa tài khoản                  (Phụ trách: Hoàng Trọng)    \n";
+        cout << " Nạp tiền vào tài khoản         (Phụ trách: Thế Quyền)      \n";
+        cout << " Rút tiền từ tài khoản          (Phụ trách: Thế Quyền)      \n";
+        cout << " Chuyển khoản an toàn           (Phụ trách: Thế Quyền)      \n";
+        cout << " In sao kê lịch sử giao dịch    (Phụ trách: Thế Quyền)      \n";
+        cout << " Chạy Thử nghiệm & Benchmark    (Phụ trách: Phú Quốc)       \n";
+        cout << " Lưu dữ liệu ra File            (Phụ trách: Anh Tú)         \n";
+        cout << " Thoát và Lưu hệ thống                                      \n";
         cout << "================================================================\n";
-        cout << "L?a ch?n c?a b?n (0-9): ";
+        cout << "Lựa chọn của bạn (0-9): ";
     }
 }
 
 // ============================================================================
-// PH?N 6: MODULE TESTING, BENCHMARK & MOCK DATA
-// TH�NH VI�N PH? TR�CH: NGUY?N PH� QU?C - MSSV: 6651060049
-// NH�NH GIT: TV5-testing-benchmark-demo
-// NHI?M V?: Ki?m th?, Benchmark Rehash/Load Factor & T?o d? li?u m?u Demo
+// PHẦN 6: MODULE TESTING, BENCHMARK & MOCK DATA
+// THÀNH VIÊN PHỤ TRÁCH: NGUYỄN PHÚ QUỐC - MSSV: 6651060049
+// NHÁNH GIT: TV5-testing-benchmark-demo
+// NHIỆM VỤ: Kiểm thử, Benchmark Rehash/Load Factor & Tạo dữ liệu mẫu Demo
 // ============================================================================
 
 namespace TestingAndBenchmarkModule {
 
-    // Kh?i t?o d? li?u th? nghi?m m?u cho 5 th�nh vi�n nh�m
+    // Khởi tạo dữ liệu thử nghiệm mẫu cho 5 thành viên nhóm
     void generateMockData(HashTable& ht) {
-        cout << "\n--- [MODULE PH� QU?C] KH?I T?O D? LI?U M?U �? DEMO ---\n";
+        cout << "\n--- [MODULE PHÚ QUỐC] KHỞI TẠO DỮ LIỆU MẪU ĐỂ DEMO ---\n";
 
         Account a1("1000000001", "Phan Nam", "012345678901", 5000000);
         Account a2("1000000002", "Nguyen Phuong Hoang Trong", "012345678902", 12000000);
@@ -636,17 +638,17 @@ namespace TestingAndBenchmarkModule {
         ht.insertAccount(a4);
         ht.insertAccount(a5);
 
-        cout << "=> TH�NH C�NG: �� kh?i t?o 5 t�i kho?n m?u cho 5 th�nh vi�n nh�m!\n";
+        cout << "=> THÀNH CÔNG: Đã khởi tạo 5 tài khoản mẫu cho 5 thành viên nhóm!\n";
     }
 
-    // Th? nghi?m Benchmark Hash Table & Rehash
+    // Thử nghiệm Benchmark Hash Table & Rehash
     void runBenchmark(HashTable& ht) {
-        cout << "\n--- [MODULE PH� QU?C] TH? NGHI?M BENCHMARK HASH TABLE & REHASH ---\n";
-        cout << " S? lu?ng t�i kho?n hi?n t?i: " << ht.getSize() << endl;
-        cout << " K�ch thu?c M?ng bam (Capacity): " << ht.getCapacity() << endl;
-        cout << " H? s? t?i hi?n t?i (Load Factor): " << fixed << setprecision(2) << ht.getLoadFactor() << endl;
+        cout << "\n--- [MODULE PHÚ QUỐC] THỬ NGHIỆM BENCHMARK HASH TABLE & REHASH ---\n";
+        cout << " Số lượng tài khoản hiện tại: " << ht.getSize() << endl;
+        cout << " Kích thước Mảng băm (Capacity): " << ht.getCapacity() << endl;
+        cout << " Hệ số tải hiện tại (Load Factor): " << fixed << setprecision(2) << ht.getLoadFactor() << endl;
 
-        cout << "\n... �ang ch�n t? d?ng 20 t�i kho?n d? ki?m tra t�nh nang REHASH ...\n";
+        cout << "\n... Đang chèn tự động 20 tài khoản để kiểm tra tính năng REHASH ...\n";
         for (int i = 10; i < 30; ++i) {
             string accNum = "10000000" + to_string(i);
             string name = "Khach Hang Test " + to_string(i);
@@ -654,33 +656,33 @@ namespace TestingAndBenchmarkModule {
             ht.insertAccount(acc);
         }
 
-        cout << "\n=> K?T QU? SAU KHI BENCHMARK CH�N H�NG LO?T:\n";
-        cout << " S? lu?ng t�i kho?n m?i: " << ht.getSize() << endl;
-        cout << " K�ch thu?c M?ng bam m?i: " << ht.getCapacity() << endl;
-        cout << " H? s? t?i m?i (Load Factor): " << ht.getLoadFactor() << endl;
-        cout << "=> K?T LU?N: Thu?t to�n Rehash ho?t d?ng O(1) b?ng bam kh�ng b? qu� t?i!\n";
+        cout << "\n=> KẾT QUẢ SAU KHI BENCHMARK CHÈN HÀNG LOẠT:\n";
+        cout << " Số lượng tài khoản mới: " << ht.getSize() << endl;
+        cout << " Kích thước Mảng băm mới: " << ht.getCapacity() << endl;
+        cout << " Hệ số tải mới (Load Factor): " << ht.getLoadFactor() << endl;
+        cout << "=> KẾT LUẬN: Thuật toán Rehash hoạt động O(1) bảng băm không bị quá tải!\n";
     }
 }
 
 // ============================================================================
-// PH?N 7: H�M MAIN CH�NH - K?T N?I TO�N B? S?N PH?M C?A 5 TH�NH VI�N
-// T?NG H?P V� �I?U KHI?N CHUONG TR�NH D? �N �T07
+// PHẦN 7: HÀM MAIN CHÍNH - KẾT NỐI TOÀN BỘ SẢN PHẨM CỦA 5 THÀNH VIÊN
+// TỔNG HỢP VÀ ĐIỀU KHIỂN CHƯƠNG TRÌNH DỰ ÁN ĐT07
 // ============================================================================
 
 int main() {
-    // T?i uu h�a I/O C++
+    // Tối ưu hóa I/O C++
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
     srand(time(0));
 
-    // Kh?i t?o B?ng bam core c?a Leader Phan Nam
+    // Khởi tạo Bảng băm core của Leader Phan Nam
     HashTable bankHashTable(11);
 
-    // T?i d? li?u cu t? File do Hu?nh Anh T� qu?n l�
+    // Tải dữ liệu cũ từ File do Huỳnh Anh Tú quản lý
     FileAndUIModule::loadData(bankHashTable);
 
-    // N?u h? th?ng m?i ho�n to�n chua c� d? li?u th� n?p d? li?u m?u c?a Nguy?nn Ph� Qu?c
+    // Nếu hệ thống mới hoàn toàn chưa có dữ liệu thì nạp dữ liệu mẫu của Nguyễn Phú Quốc
     if (bankHashTable.getSize() == 0) {
         TestingAndBenchmarkModule::generateMockData(bankHashTable);
     }
@@ -691,7 +693,7 @@ int main() {
         if (!(cin >> choice)) {
             cin.clear();
             cin.ignore(10000, '\n');
-            cout << "=> ERROR: Vui l�ng nh?p s? t? 0 d?n 9!\n";
+            cout << "=> ERROR: Vui lòng nhập số từ 0 đến 9!\n";
             continue;
         }
 
@@ -725,14 +727,16 @@ int main() {
                 break;
             case 0:
                 FileAndUIModule::saveData(bankHashTable);
-                cout << "\n=> C?M ON B?N �� S? D?NG H? TH?NG NG�N H�NG. T?M BI?T!\n";
+                cout << "\n=> CẢM ƠN BẠN ĐÃ SỬ DỤNG HỆ THỐNG NGÂN HÀNG. TẠM BIỆT!\n";
                 break;
             default:
-                cout << "=> ERROR: L?a ch?n kh�ng h?p l?! Vui l�ng nh?p t? 0 d?n 9.\n";
+                cout << "=> ERROR: Lựa chọn không hợp lệ! Vui lòng nhập từ 0 đến 9.\n";
                 break;
         }
     } while (choice != 0);
 
     return 0;
 }
+```
 
+---
